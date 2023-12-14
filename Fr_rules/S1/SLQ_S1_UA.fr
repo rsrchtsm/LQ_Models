@@ -1,0 +1,96 @@
+(***************************************************************************************************************)
+(******                       This is the FeynRules model file for the s10 Leptoquark                      ******)
+(******                                                                                                   ******)
+(******                        Authors: Tanumoy Mandal, Arijit Das, Rachit Sharma                         ******)
+(******                                                                                                   ******)
+(***************************************************************************************************************)
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+
+
+M$ModelName = "S1_CKM_UA";
+
+
+
+IndexRange[Index[SU2S]] = Unfold[Range[1]]; 
+
+
+IndexStyle[SU2S,i];
+
+
+
+M$InteractionOrderHierarchy = {
+  {QCD, 1},
+  {QED, 2},
+  {SLQ, 3}
+};
+
+
+
+
+M$Parameters = {
+y10LL == {
+    	ParameterType    -> External,
+	ComplexParameter -> False,
+    	Indices          -> {Index[Generation], Index[Generation]},
+	BlockName        -> YUKS1LL,
+    	Value            -> {y10LL[1,1] -> 0.0, y10LL[1,2] -> 0.0, y10LL[1,3] -> 0.0,
+                      	     y10LL[2,1] -> 0.0, y10LL[2,2] -> 0.0, y10LL[2,3] -> 0.0,
+                             y10LL[3,1] -> 0.0, y10LL[3,2] -> 0.0, y10LL[3,3] -> 0.0},
+    	TeX              -> Superscript[Subscript[y,10],LL],
+	InteractionOrder -> {SLQ, 1},
+    	Description      -> "s10 leptoquark LL Yukawa coupling matrix"
+},
+y10RR == {
+    	ParameterType    -> External,
+	ComplexParameter -> False,
+    	Indices          -> {Index[Generation], Index[Generation]},
+	BlockName        -> YUKS1RR,
+    	Value            -> {y10RR[1,1] -> 0.0, y10RR[1,2] -> 0.0, y10RR[1,3] -> 0.0,
+                      	     y10RR[2,1] -> 0.0, y10RR[2,2] -> 0.0, y10RR[2,3] -> 0.0,
+                             y10RR[3,1] -> 0.0, y10RR[3,2] -> 0.0, y10RR[3,3] -> 0.0},
+    	TeX              -> Superscript[Subscript[y,10],RR],
+	InteractionOrder -> {SLQ, 1},
+    	Description      -> "s10 leptoquark RR Yukawa coupling matrix"
+}
+};
+
+
+M$ClassesDescription = {
+S[100] == {
+    ClassName        -> s101,
+    Mass             -> {Ms101, 1000.0},
+    Width            -> {Ws101, 10.0},
+    SelfConjugate    -> False,
+    PropagatorLabel  -> "s101",
+    PropagatorType   -> ScalarDash,
+    PropagatorArrow  -> None,
+    QuantumNumbers   -> {Q -> -1/3, LeptonNumber -> 1},
+    Indices          -> {Index[Colour]},
+    PDG	      	     -> 4202011,
+    ParticleName     -> "s101",
+    AntiParticleName -> "s101~",
+    FullName         -> "s101"
+},
+S[110] == {
+    ClassName      -> s10,
+    Unphysical     -> True,
+    Indices        -> {Index[SU2S], Index[Colour]},
+    SelfConjugate  -> False,
+    QuantumNumbers -> {Y -> -1/3},
+    Definitions    -> {s10[1,cc_] :> s101[cc]}
+}
+};
+
+
+
+
+Ls1Kin := DC[s10bar[1,aa],mu] DC[s10[1,aa],mu];
+
+Ls1Yuk := y10LL[a,b] (anti[CC[uq]][i,a,ss].ProjM[i,j].l[j,b] - CKM[a,c].anti[CC[dq]][i,c,ss].ProjM[i,j].vl[j,b]) s101bar[ss] + y10RR[a,b] (anti[CC[uq]][i,a,ss].ProjP[i,j].l[j,b]) s101bar[ss];
+
+LBSM := Ls1Kin + Ls1Yuk + HC[Ls1Yuk];
+
+
